@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Installs and configures Nginx with a custom HTTP response header
+
+apt-get update -y
+apt-get install -y nginx
+
+echo "Holberton School for the win!" > /var/www/html/index.html
+
+awk '
+/server_name _;/ {
+    print;
+    print "    add_header X-Served-By \$hostname;";
+    next
+}
+{ print }
+' /etc/nginx/sites-available/default > /tmp/default
+
+mv /tmp/default /etc/nginx/sites-available/default
+
+service nginx restart
