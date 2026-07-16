@@ -1,7 +1,7 @@
-# Increase nginx open file limit and restart nginx
+# Increase nginx open file limit
 
-exec { 'fix-nginx':
-  command => "sed -i '/worker_processes/a worker_rlimit_nofile 4096;' /etc/nginx/nginx.conf && service nginx restart",
+exec { 'fix-nginx-ulimit':
+  command => "sed -i 's/^ULIMIT=\"-n 15\"/ULIMIT=\"-n 4096\"/' /etc/default/nginx && service nginx restart",
+  unless  => "grep '^ULIMIT=\"-n 4096\"' /etc/default/nginx",
   path    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
-  unless  => "grep -q '^worker_rlimit_nofile 4096;' /etc/nginx/nginx.conf",
 }
